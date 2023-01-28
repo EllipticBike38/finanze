@@ -1,5 +1,2 @@
-from main import app
-import models
-import routers
-import crud
-from main import *
+from .main import app
+from .main import *
