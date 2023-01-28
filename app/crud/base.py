@@ -8,7 +8,7 @@ class baseCRUD():
     obj_class:Type
     
     def create(self, db: Session, obj: Type[BaseModel]):
-        obj = self.obj_class(**dict(obj))
+        obj = self.obj_class(**obj.dict(exclude_none=True))
         db.add(obj)
         db.commit()
         db.refresh(obj)

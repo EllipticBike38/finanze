@@ -5,20 +5,23 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from typing import List
 
+
 class QueryTagSchema(BaseModel):
     id: int
     nome: str
     transactions: List[int] = Field([])
 
+
 class QueryTransazioneSchema(BaseModel):
     id: int
-    date: str
+    date: datetime
     costo: float
     nome: str
     descrizione: Optional[str]
     user_id: int
     abbonamento_id: Optional[int]
     tags: List[int] = Field([])
+
 
 class QueryAbbonamentoSchema(BaseModel):
     id: int
@@ -32,6 +35,7 @@ class QueryAbbonamentoSchema(BaseModel):
     user_id: int
     transazioni: List[int] = Field([])
 
+
 class QueryUserSchema(BaseModel):
     id: int
     nome: str
@@ -42,5 +46,14 @@ class QueryUserSchema(BaseModel):
     transazioni: List[int] = Field([])
     abbonamenti: List[int] = Field([])
 
+
 class QueryUserList(BaseModel):
-    users:List[QueryUserSchema]
+    users: List[QueryUserSchema]
+
+
+class QueryTransazioneList(BaseModel):
+    transazioni: List[QueryTransazioneSchema]
+
+
+class QueryAbbonamentoList(BaseModel):
+    abbonamenti: List[QueryAbbonamentoSchema]

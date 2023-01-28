@@ -1,13 +1,10 @@
 from sqlalchemy.orm import Session
+from models.models import Transazione
+from .base import baseCRUD
+import schemas
 
-class transazioniCRUD():
-    def create(db:Session):
-        ...
-    def update(db:Session):
-        ...
-    def get(db:Session):
-        ...
-    def delete(db:Session):
-        ...
+
+class transazioniCRUD(baseCRUD):
+    obj_class=Transazione
 
 transazioni=transazioniCRUD()

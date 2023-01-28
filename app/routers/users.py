@@ -14,8 +14,7 @@ router = APIRouter(prefix='/user',
 def query(request: Request,
           db=Depends(get_db)):
     params = request.query_params._dict
-    q_users = users.get_by_kwargs(
-        db, **params) if params else users.get_all(db)
+    q_users = users.get_all(db)
     
     return {'users':[schemas.QueryUserSchema(**q_user.__dict__) for q_user in q_users]}
 

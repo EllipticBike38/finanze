@@ -13,7 +13,7 @@ class CreateTagSchema(BaseModel):
     
 
 class CreateTransazioneSchema(BaseModel):
-    date: str
+    date: datetime
     costo: float
     nome: str
     descrizione: Optional[str]

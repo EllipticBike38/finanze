@@ -1,16 +1,10 @@
 from sqlalchemy.orm import Session
-class abbonamentiCRUD():
-    def create(db:Session):
-        ...
+from models.models import Abbonamento
+from .base import baseCRUD
+import schemas
 
-    def update(db:Session):
-        ...
 
-    def get(db:Session):
-        ...
-
-    def delete(db:Session):
-        ...
-        
+class abbonamentiCRUD(baseCRUD):
+    obj_class=Abbonamento
 
 abbonamenti=abbonamentiCRUD()
