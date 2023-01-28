@@ -1,0 +1,44 @@
+version: '3'
+services:
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432
+    networks:
+      - internal-network
+
+  app:
+    build: ./app
+    command: sh /app/docker-entrypoint.sh
+    volumes:
+      - ./app:/app
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - internal-network
+      
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin
+    ports:
+      - 5050:80
+    depends_on:
+      - db
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    driver: bridge
