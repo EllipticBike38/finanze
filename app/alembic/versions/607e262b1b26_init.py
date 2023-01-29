@@ -37,7 +37,7 @@ def upgrade() -> None:
     sa.Column('giorno', sa.Integer(), nullable=False),
     sa.Column('mese', sa.Integer(), nullable=False),
     sa.Column('inizio', sa.DateTime(), nullable=False),
-    sa.Column('fine', sa.DateTime(), nullable=False),
+    sa.Column('fine', sa.DateTime(), nullable=True),
     sa.Column('costo', sa.Float(), nullable=False),
     sa.Column('nome', sa.String(), nullable=False),
     sa.Column('descrizione', sa.String(), nullable=False),
