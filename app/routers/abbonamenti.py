@@ -1,9 +1,10 @@
 from fastapi import Body, Depends, Request
 from fastapi.routing import APIRouter
 from pydantic import Field
+from errors import NotFoundError
 import schemas
 from models.models import Abbonamento
-from crud import abbonamenti
+from crud import abbonamenti, users
 from dependencies import get_db
 
 router = APIRouter(prefix='/subs',
@@ -25,6 +26,8 @@ def query_by_user(request: Request,
                   user: int,
                   db=Depends(get_db)):
 
+    db_user = users.get(db, user)
+    if not db_user:raise NotFoundError 
     q_abbonamenti = [abb for abb in abbonamenti.get_all(
         db) if abb.user_id == user]
 

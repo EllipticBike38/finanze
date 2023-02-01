@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Type
+from models.models import Base
 import schemas
 
 
 class baseCRUD():
-    obj_class:Type
+    obj_class:Type=Base
     
     def create(self, db: Session, obj: Type[BaseModel]):
         obj = self.obj_class(**obj.dict(exclude_none=True))
@@ -25,7 +26,7 @@ class baseCRUD():
         obj = db.get(self.obj_class, id)
         return obj
 
-    def get_all(self, db: Session):
+    def get_all(self, db: Session) -> list[obj_class]:
         all=db.query(self.obj_class).all()
         return all
 

@@ -5,6 +5,7 @@ import schemas
 from models.models import User
 from crud import users
 from dependencies import get_db
+from errors import ConflictError, NotFoundError
 router = APIRouter(prefix='/user',
                    tags=['Utenti']
                    )
@@ -24,6 +25,8 @@ def create(
     user: schemas.CreateUserSchema,
     db=Depends(get_db)
 ):
+    if any(tuple(u.email==user.email or u.nickname == user.nickname for u in users.get_all(db))):
+        raise ConflictError
     user = users.create(db=db, obj=user)
     return user.__dict__
 
@@ -34,6 +37,8 @@ def update(
     id:int,
     db=Depends(get_db)
 ):
+    user = users.get(db, id)
+    if not user:raise NotFoundError 
     user = users.update(db=db, id = id,obj=user)
     return user.__dict__
 
@@ -42,6 +47,9 @@ def update(
 def delete(
         user_id: int,
         db=Depends(get_db)):
+
+    user = users.get(db, user_id)
+    if not user:raise NotFoundError 
     final_id=users.delete(db, user_id)
     return {'id':final_id}
     ...
@@ -53,4 +61,5 @@ def get(
         db=Depends(get_db)):
 
     user = users.get(db, user_id)
+    if not user:raise NotFoundError 
     return user.__dict__
