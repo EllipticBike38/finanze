@@ -5,7 +5,7 @@ import schemas
 from models.models import User
 from crud import users
 from dependencies import get_db
-from errors import ConflictError, NotFoundError
+from errors import ConflictError, NotFoundError, response
 router = APIRouter(prefix='/user',
                    tags=['Utenti']
                    )
@@ -20,7 +20,7 @@ def query(request: Request,
     return {'users':[schemas.QueryUserSchema(**q_user.__dict__) for q_user in q_users]}
 
 
-@router.api_route('', methods=['POST'], response_model=schemas.QueryUserSchema)
+@router.api_route('', methods=['POST'], response_model=schemas.QueryUserSchema, responses=response([409]))
 def create(
     user: schemas.CreateUserSchema,
     db=Depends(get_db)
@@ -31,7 +31,7 @@ def create(
     return user.__dict__
 
 
-@router.api_route('', methods=['PUT'], response_model=schemas.QueryUserSchema)
+@router.api_route('', methods=['PUT'], response_model=schemas.QueryUserSchema, responses=response([404]))
 def update(
     user: schemas.UpdateUserSchema,
     id:int,
@@ -43,7 +43,7 @@ def update(
     return user.__dict__
 
 
-@router.api_route('', methods=['DELETE'])
+@router.api_route('', methods=['DELETE'], responses=response([404]))
 def delete(
         user_id: int,
         db=Depends(get_db)):
@@ -55,7 +55,7 @@ def delete(
     ...
 
 
-@router.api_route('/{user_id}', methods=['GET'], response_model=schemas.QueryUserSchema)
+@router.api_route('/{user_id}', methods=['GET'], response_model=schemas.QueryUserSchema, responses=response([404]))
 def get(
         user_id: int,
         db=Depends(get_db)):

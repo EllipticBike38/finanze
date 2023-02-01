@@ -1,10 +1,12 @@
 from fastapi.exceptions import RequestValidationError
 from psycopg2.errors import ForeignKeyViolation
+from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
 
 
-async def foreign_key_exception_handler(request, exc: ForeignKeyViolation):
+async def foreign_key_exception_handler(request, exc: IntegrityError):
     return JSONResponse(status_code=404, content={"error": str(exc)})
+
 
 async def validation_exception_handler(request, exc: RequestValidationError):
     return JSONResponse(status_code=400, content={"error": str(exc)})
@@ -35,7 +37,8 @@ class UnauthorizedError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message
+        if message:
+            self.msg = message
 
 
 class ForbiddenError(GenericError):
@@ -44,7 +47,8 @@ class ForbiddenError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message
+        if message:
+            self.msg = message
 
 
 class NotFoundError(GenericError):
@@ -53,7 +57,8 @@ class NotFoundError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message + ' Not Found'
+        if message:
+            self.msg = message + ' Not Found'
 
 
 class MethodNotAllowedError(GenericError):
@@ -62,7 +67,8 @@ class MethodNotAllowedError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message
+        if message:
+            self.msg = message
 
 
 class NotAcceptableError(GenericError):
@@ -71,7 +77,8 @@ class NotAcceptableError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message
+        if message:
+            self.msg = message
 
 
 class ConflictError(GenericError):
@@ -80,7 +87,8 @@ class ConflictError(GenericError):
 
     def __init__(self, message=None, *args) -> None:
         super().__init__(*args)
-        if message: self.msg = message + ' Already Exixsts'
+        if message:
+            self.msg = message + ' Already Exixsts'
 
 
 async def not_found_error_handler(request, exc: NotFoundError):
@@ -108,7 +116,7 @@ async def conflict_error_handler(request, exc: ConflictError):
 
 handlers = (foreign_key_exception_handler,
             validation_exception_handler,
-            generic_error_handler, 
+            generic_error_handler,
             not_found_error_handler,
             unauthorized_error_handler,
             forbidden_error_handler,
@@ -116,12 +124,87 @@ handlers = (foreign_key_exception_handler,
             not_acceptable_error_handler,
             conflict_error_handler)
 
-errors = (RequestValidationError,
-          ForeignKeyViolation,
-          GenericError,
-          NotFoundError,
-          UnauthorizedError,
-          ForbiddenError,
-          MethodNotAllowedError,
-          NotAcceptableError,
-          ConflictError)
+errors = (
+    IntegrityError,
+    RequestValidationError,
+    GenericError,
+    NotFoundError,
+    UnauthorizedError,
+    ForbiddenError,
+    MethodNotAllowedError,
+    NotAcceptableError,
+    ConflictError
+    )
+
+responses={
+    #GenericError
+    400 : {
+        'details' : GenericError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":GenericError.msg}
+                }
+            },
+    } ,
+    #UnauthorizedError
+    401 : {
+        'details' : UnauthorizedError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":UnauthorizedError.msg}
+                }
+            },
+    } ,
+    #ForbiddenError
+    403 : {
+        'details' : ForbiddenError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":ForbiddenError.msg}
+                }
+            },
+    } ,
+    #NotFoundError
+    404 : {
+        'details' : NotFoundError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error": "user Not Found"}
+                }
+            },
+    } ,
+    #MethodNotAllowedError
+    405 : {
+        'details' : MethodNotAllowedError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":MethodNotAllowedError.msg}
+                }
+            },
+    } ,
+    #NotAcceptableError
+    406 : {
+        'details' : NotAcceptableError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":NotAcceptableError.msg}
+                }
+            },
+    } ,
+    #ConflictError
+    409 : {
+        'details' : ConflictError.msg,
+        "content": {
+                "application/json": {
+                    "example": {"error":ConflictError.msg}
+                }
+            },
+    } ,
+}
+
+def response(codes:list[int]):
+    a=dict()
+    for code in codes:
+        if code in responses.keys():
+            a[code]= responses.get(code)
+    return a
