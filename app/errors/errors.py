@@ -169,7 +169,7 @@ responses={
         'details' : NotFoundError.msg,
         "content": {
                 "application/json": {
-                    "example": {"error": "user Not Found"}
+                    "example": {"error": NotFoundError.msg}
                 }
             },
     } ,
